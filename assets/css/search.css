@@ -1,0 +1,144 @@
+/* search */
+@import url("var.css");
+
+
+.header {
+  background-color: #fafafa;
+  border-bottom: 1px solid #ebebeb;
+
+}
+
+
+.wrapper .headerContent {
+  display: flex;
+  align-items: center;
+}
+
+
+
+.headerContent .logoContainer {
+  width: 150px;
+  padding: 5px 20px;
+}
+
+.headerContent .searchContainer {
+  flex: 1;
+}
+
+.headerContent .searchContainer form {
+  margin: 15px 0px 28px 0px;
+}
+
+.headerContent .searchBarContainer {
+  height: 44px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: var(--search-form-input-shadow);
+  width: 70%;
+  max-width: 630px;
+  display: flex;
+}
+
+
+.headerContent .searchBarContainer .searchBox {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px;
+  font-size: 16px;
+  color: #111;
+}
+
+
+.headerContent .searchBarContainer .searchButton {
+  background-color: #fff;
+  height: 44px;
+  margin-top: 0;
+  width: 44px;
+  display: flex;
+  justify-content: center;
+}
+
+.headerContent .searchBarContainer .searchButton img {
+  width: 22px;
+  margin: auto;
+}
+
+
+/* tabs */
+
+
+.tabsContainer {
+  margin-left: 150px;
+}
+
+.tabsContainer .tabsList {
+  padding: 0;
+  margin: 0;
+}
+
+.tabsContainer .tabsList li {
+  display: inline-block;
+  padding: 0px 16px 12px 16px;
+  color: #777777;
+  font-size: 13px;
+}
+
+
+.tabsContainer .tabsList li.active {
+  border-bottom: 3px solid #1a73a8;
+}
+
+
+/* main results */
+
+
+.mainResultsSection{
+  flex: 1;
+}
+
+.mainResultsSection .resultsCount{
+  font-size: 13px;
+  color: #808080;
+  margin-left: 150px;
+}
+
+.mainResultsSection .siteResults{
+  margin-left: 150px;
+}
+
+.resultContainer{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 26px;
+}
+
+
+
+.resultContainer .title{
+  margin: 0;
+  
+}
+.resultContainer .title a{
+  color: #1a0dab;
+  text-decoration: none;
+  font-weight: normal;
+  font-size: 18px;
+}
+
+
+
+.resultContainer .title  a:hover{
+  text-decoration: underline;
+
+}
+.resultContainer .url{
+  color: #006621;
+  font-size: 14px;
+}
+
+.resultContainer .description{
+  font-size: 12px;
+}
+
+

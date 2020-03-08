@@ -1,0 +1,17 @@
+/* root */
+body,
+html {
+  margin: 0;
+  padding: 0;
+
+}
+
+* {
+  box-sizing: border-box;
+  font-family: arial, sans-serif;
+  color: #545454;
+}
+
+a {
+  text-decoration: none;
+}
