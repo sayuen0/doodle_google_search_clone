@@ -1,6 +1,9 @@
 <?php
 require_once "includes/header.php";
-require_once "includes/classes/SearchResulstProvider.php";
+require_once "includes/classes/SearchResultsProvider.php";
+require_once "includes/classes/ImageResultsProvider.php";
+require_once "includes/classes/PaginationProvider.php";
+
 if (isset($_GET["term"])) {
   $term = $_GET["term"];
 } else {
@@ -31,6 +34,7 @@ function isActive($type, $link)
       <div class="searchContainer">
         <form action="search.php" method="GET">
           <div class="searchBarContainer">
+            <input type="hidden" name="type" value="<?= $type ?>">
             <input type="text" name="term" class="searchBox" value="<?= $term ?>">
             <button type="submit" class="searchButton">
               <img src="assets/images/icons/search.png" alt="">
@@ -43,24 +47,60 @@ function isActive($type, $link)
     <div class="tabsContainer">
       <ul class="tabsList">
         <li class="<?= isActive($type, "sites")  ?>"><a href="<?= "search.php?term=$term&type=sites" ?>">Sites</a></li>
-        <li class="<?= isActive($type, "images")  ?>"><a href="<?= "search.php?term=$term&type=imagee" ?>">Images</a></li>
+        <li class="<?= isActive($type, "images")  ?>"><a href="<?= "search.php?term=$term&type=images" ?>">Images</a></li>
       </ul><!-- /.tabList -->
     </div><!-- /.tabsContainer -->
   </header>
 
   <section class="mainResultsSection">
     <?php
-    $resultProvider = new SearchResulstProvider($con);
+    if ($type == "images") {
+      $resultProvider = new ImageResultsProvider($con);
+      $pageSize = 30;
+    } else {
+      $resultProvider = new SearchResultsProvider($con);
+      $pageSize = 20;
+    }
     $numResults =  $resultProvider->getNumResults($term);
+
     echo <<<HTML
       <p class="resultsCount">$numResults results found</p>
     HTML;
 
-    $pageLimit = 20;
-
-    echo $resultProvider->getResultHtml($page, $pageLimit, $term);
 
 
+    echo $resultProvider->getResultHtml($page, $pageSize, $term);
     ?>
   </section><!-- /.mainResultsSection -->
+
+
+  <div class="paginationContainer">
+
+    <div class="pageButtons">
+
+      <div class="pageNumberContainer">
+        <img src="assets/images/logos/pageStart.png" alt="">
+      </div><!-- /.pageButtons -->
+
+      <?php
+
+      // todo: ここのロジックはよく読んで理解する
+      PaginationProvider::createPagination($term, $type, $page, $numResults, $pageSize);
+      ?>
+
+      <div class="pageNumberContainer">
+        <img src="assets/images/logos/pageEnd.png" alt="">
+      </div><!-- /.pageButtons -->
+
+    </div>
+
+
+  </div><!-- /.paginationContainer -->
 </div><!-- /.wrapper searchPage -->
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script type="text/javascript" src="/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+<script src="assets/js/index.js"></script>
+
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 <?php
-class SearchResulstProvider
+class ImageResultsProvider
 {
   private $con;
 
@@ -11,11 +11,10 @@ class SearchResulstProvider
   public function getNumResults($term)
   {
     $query = $this->con->prepare(<<<SQL
-    SELECT COUNT(*) as total  FROM  sites
-    WHERE title like :term
-    or url like :term
-    or keywords like :term
-    or description like :term
+    SELECT COUNT(*) as total  FROM  images
+    WHERE( title like :term
+    or alt like :term)
+    AND broken=0
     SQL);
     $searchTerm = "%" . $term . "%";
     $query->bindParam(":term", $searchTerm);
@@ -30,44 +29,58 @@ class SearchResulstProvider
     // page2 : (2 - 1) *20 = 20
 
     $query = $this->con->prepare(<<<SQL
-    SELECT * FROM  sites
-    WHERE title like :title
-    or url like :url
-    or keywords like :term
-    or description like :term
+    SELECT *  FROM  images
+    WHERE( title like :term
+    or alt like :term)
+    AND broken=0
+    ORDER BY clicks DESC
     LIMIT :fromLimit, :pageSize
     SQL);
-    $encodedUrl = "%" . urlencode($term) . "%";
+    // $encodedUrl = "%" . urlencode($term) . "%";
     $searchTerm = "%" . $term . "%";
-    $query->bindParam(":title", $searchTerm);
-    $query->bindParam(":url", $encodedUrl);
-    $query->bindParam(":term", $term);
+    $query->bindParam(":term", $searchTerm);
+    // $query->bindParam(":url", $encodedUrl);
+    // $query->bindParam(":term", $searchTerm);
     $query->bindParam(":fromLimit", $fromLimit, PDO::PARAM_INT);
     $query->bindParam(":pageSize", $pageSize, PDO::PARAM_INT);
     $query->execute();
     $results = "";
-    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
-      $id = $row["id"];
-      $url = $row["url"];
-      $title = $row["title"];
-      $description = $row["description"];
 
-      $title = $this->trimField($title, 55);
-      $description = $this->trimField($description, 230);
+    $count = 0;
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $count++;
+      $id = $row["id"];
+      $imageUrl = $row["imageUrl"];
+      $siteUrl = $row["siteUrl"];
+      $title = $row["title"];
+      $alt = $row["alt"];
+
+      if ($title) {
+        $displayText = $title;
+      } elseif ($alt) {
+        $displayText  = $alt;
+      } else {
+        $displayText = $imageUrl;
+      }
 
       $results .=  <<<HTML
-        <div class="resultContainer">
-          <h3 class="title">
-            <a href="$url" class="result">$title</a><!-- /.result -->
-          </h3><!-- /.title -->
-          <span class="url">$url</span><!-- /.url -->
-          <span class="description">$description</span><!-- /.url -->
-        </div><!-- /.resultContainer -->
+        <div class="gridItem image$count">
+          <a href="$imageUrl" data-fancybox data-caption="$displayText">
+            <script>
+              $(document).ready(function () {
+                loadImage("$imageUrl","image$count")
+              });
+
+            </script>
+            <!-- <img src="$imageUrl" alt=""> -->
+            <span class="details">$displayText</span><!-- /.details -->
+          </a>
+        </div><!-- /.gridItem -->
       HTML;
     }
 
     $resultsContainer = <<<HTML
-    <div class="siteResults">
+    <div class="imageResults">
       $results
     </div><!-- /.siteResults -->
     HTML;
